@@ -1,6 +1,6 @@
 {
   "name": "esbuild-plugin-native-css-module",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Resolve import with type css as Constructable Stylesheets",
   "type": "module",
   "main": "index.js",
