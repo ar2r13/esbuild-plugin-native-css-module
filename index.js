@@ -2,9 +2,10 @@ import esbuild from 'esbuild'
 
 import postcss from 'postcss'
 import env from 'postcss-preset-env'
+import atimport from 'postcss-import'
+import cssnano from 'cssnano'
 
 import { readFile } from 'fs/promises'
-import cssnano from 'cssnano'
 
 const module = code => `
 const style = new CSSStyleSheet
@@ -21,7 +22,6 @@ export default config => ({
 		const { minify } = build.initialOptions
 
 		build.onLoad({ filter }, async ({ path: from, with: { type } }) => {
-
 			const { code } = await readFile(from, 'utf-8').then(
 				code => esbuild.transform(code, {
 					loader: 'css', minify
@@ -33,8 +33,11 @@ export default config => ({
 					stage: 0, 
 					browsers: 'safari 15',
 					features: { 'cascade-layers': false }
-				})
+				}),
+				...config.plugins || []
 			]
+
+			if (type === 'css') plugins.unshift(atimport())
 			if (minify) plugins.push(cssnano)
 
  			const { css } = await postcss(plugins).process(code, { from })
